@@ -1,12 +1,15 @@
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
+import java.util.SplittableRandom;
 
 public class DetailsAndData {
+    protected PrimaryData primaryData;
     protected Scanner scanner = new Scanner(System.in);
+    protected RandomAccessFile flightsRaf =new RandomAccessFile("flights.dat","rw");
     protected Users users = new Users(new RandomAccessFile("users.dat","rw"));
     protected Tickets tickets = new Tickets(new RandomAccessFile("tickets.dat","rw"),users);
-    protected Flights flights = new Flights(tickets,new RandomAccessFile("flights.dat","rw"));
+    protected Flights flights = new Flights(tickets,users,flightsRaf);
 
     public DetailsAndData() throws FileNotFoundException {
     }
@@ -27,7 +30,7 @@ public class DetailsAndData {
     }
 
     public static void printFlight(String flight){
-        System.out.println(flight);
+        System.out.print(flight);
     }
 
     protected Flight makeFlight() throws FileNotFoundException {
@@ -51,11 +54,17 @@ public class DetailsAndData {
     }
     protected String getDate() {
         String tempDate= inputProcess("Enter the date (like: YYYY-MM-DD)");
-        while ((!tempDate.matches("^\\d\\d\\d\\d-[0-1]\\d-[0-3]\\d$") &&(!tempDate.equals("")))) {
+        while ((!tempDate.matches("^\\d(4)-[0-1]\\d-[0-3]\\d$") &&(!tempDate.equals("")))) {
             System.out.println("incorrect input!!");
             tempDate= inputProcess("Enter the date (like: YYYY-MM-DD)");
         }
         return tempDate;
+    }
+    protected static  String flightHead(){
+        return String.format("%19s|%19s|%19s|%19s|%19s|%19s|%19s|\n\n","Flight ID","Origin","Destination","Date","Time","Price","Seats");
+    }
+    protected static String TicketHead(){
+        return String.format("%19s|%19s|%19s|%19s|%19s|%19s|%19s|%19s|\n\n","Ticket ID","Flight ID","Origin","Destination","Date","Time","Price","Seats");
     }
 
 }

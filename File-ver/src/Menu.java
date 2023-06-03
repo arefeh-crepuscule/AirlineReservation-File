@@ -1,12 +1,10 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Scanner;
 
 public class Menu extends DetailsAndData{
-      public Menu() throws FileNotFoundException {
-//        PrimaryData primaryData = new PrimaryData(flights);
-//        primaryData.makePrimaryFlights();
+      public Menu() throws IOException {
+        if(flightsRaf.length()==0)
+            primaryData =new PrimaryData(flights);
     }
 
 

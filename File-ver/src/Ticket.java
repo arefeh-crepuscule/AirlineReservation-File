@@ -15,7 +15,7 @@ public class Ticket {
     public Ticket(String flight, String user) {
         this.flight = flight;
         this.user = user;
-        ticketId = "TH-"+flight.trim()+"-"+user.trim()+"-"+random.nextInt(10)+random.nextInt(10)+random.nextInt(10);
+        ticketId = "TH"+flight.trim()+"-"+user.trim()+"-"+random.nextInt(10)+random.nextInt(10)+random.nextInt(10);
     }
     public String toString() {
         return Menu.formatting(ticketId)+Menu.formatting(user)+ Menu.formatting(flight);

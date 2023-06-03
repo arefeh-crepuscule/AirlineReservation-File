@@ -1,11 +1,13 @@
 import java.io.IOException;
 
-public class UserMenu extends Menu{
+public class UserMenu extends Menu {
     User user;
+
     public UserMenu(User user) throws IOException {
         this.user = user;
         userMenu();
     }
+
     public void printUserMenu() {
         System.out.print("""
                 ::::::::::::::::::::::::::::::::::::::::
@@ -46,14 +48,15 @@ public class UserMenu extends Menu{
         }
     }
 
-    private void printNotify() {
+    private void printNotify() throws IOException {
         if (user.getNotify() == 1)
-            inputProcess("Admin changed some details , so %2d flight is cancelled for you!\n"+"Enter to continue...");
-        else if (user.getNotify() >1)
-            inputProcess("Admin changed some details , so %2d flight are cancelled for you!\n"+"Enter to continue...");
-
+            inputProcess("Admin changed some details , so 1 flight is cancelled for you!\n" + "Enter to continue...");
+        else if (user.getNotify() > 1) {
+            System.out.printf("Admin changed some details , so %2d flight are cancelled for you!\n", user.getNotify());
+            inputProcess("Enter to continue...");
+        }
         user.setNotify(0);
-
+        users.rewrite(user.toString());
     }
 
     private void changePassword() {
@@ -62,6 +65,7 @@ public class UserMenu extends Menu{
             user.setPassword(inputProcess("new password :"));
         } else System.out.println("incorrect input");
     }
+
     private void searchProcess() throws IOException {
         System.out.println("Enter your selected filter , if not (press Enter 0)");
         Flight flight = makeFlight();
@@ -73,9 +77,9 @@ public class UserMenu extends Menu{
     private void bookingProcess() throws IOException {
         flights.flightSchedule();
         String flight = flights.findValue(inputProcess("Flight ID :"));
-        if (flight != null && new Flight().convertToObj(flight).getPrice() <= user.getCharge()) {
-            Flight flight1=new Flight().convertToObj(flight);
-            Ticket ticket =new Ticket(flight1.getFlightId(), user.getUsername());
+        if (flight != null && new Flight().convertToObj(flight).getPrice() <= user.getCharge()&& new Flight().convertToObj(flight).getSeats() > 0) {
+            Flight flight1 = new Flight().convertToObj(flight);
+            Ticket ticket = new Ticket(flight1.getFlightId(), user.getUsername());
             tickets.add(ticket.toString());
             flight1.updateSeats(-1);
             user.updateCharge(-(flight1.getPrice()));
@@ -83,24 +87,29 @@ public class UserMenu extends Menu{
             flights.rewrite(flight1.toString());
         } else if (flight == null) {
             System.out.println("There is no flight like with this flight ID !!");
+        } else if (new Flight().convertToObj(flight).getSeats() <= 0) {
+            System.out.println("This flight is no longer reservable!");
         } else {
             System.out.println("Insufficient inventory !!");
         }
 
     }
+
     private void cancellationProcess() throws IOException {
         String ticket = tickets.findValue(inputProcess("Ticket ID :"));
         if (ticket != null) {
-            Flight flight =new Flight().convertToObj(flights.findValue(ticket.substring(40,60).trim()));
+            Flight flight = new Flight().convertToObj(flights.findValue(ticket.substring(40, 60).trim()));
             user.updateCharge(flight.getPrice());
             flight.updateSeats(1);
             flights.rewrite(flight.toString());
-            tickets.remove(ticket.substring(0,20).trim() , new Ticket().toString());
+            tickets.remove(ticket.substring(0, 20).trim(), new Ticket().toString());
         } else System.out.println("No ticket with this ID");
     }
+
     private void showBookedProcess() throws IOException {
-        for (String ticket : tickets.searcher(String.format("%20s","")+user.getUsername()))
-            System.out.println(ticket.substring(0,20)+flights.findValue(ticket.substring(40,60).trim()));
+        System.out.print(TicketHead());
+        for (String ticket : tickets.searcher(String.format("%20s", "") + user.getUsername()))
+            System.out.print(ticket.substring(0, 20) + flights.findValue(ticket.substring(40, 60).trim()));
     }
 
 

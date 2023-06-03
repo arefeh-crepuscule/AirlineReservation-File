@@ -11,6 +11,7 @@ public class FileHandler {
     protected RandomAccessFile raf;
     public final int FIXED_SIZE;
     public final int OBJ_SIZE;
+
     public FileHandler(RandomAccessFile raf, int fixed_size, int obj_size) {
         this.raf = raf;
         FIXED_SIZE = fixed_size;
@@ -48,16 +49,16 @@ public class FileHandler {
     public boolean add(String obj) throws IOException {
         if (existValue(obj.substring(0, FIXED_SIZE).trim()) == -1)
             if (existValue("null") != -1)
-                return writeObj(existValue("null"),obj);
+                return writeObj(existValue("null"), obj);
             else
-                 return writeObj(-3, obj);
+                return writeObj(-3, obj);
         return false;
     }
 
     public List<String> searcher(String e) throws IOException {
         List<String> list = new ArrayList<>();
         for (long i = 0; i < raf.length() / OBJ_SIZE; i++) {
-            String temp = readPart(OBJ_SIZE,i * OBJ_SIZE);
+            String temp = readPart(OBJ_SIZE, i * OBJ_SIZE);
             if (compare(temp, e))
                 list.add(temp);
         }
@@ -65,26 +66,45 @@ public class FileHandler {
     }
 
     public boolean compare(String st1, String st2) {
-        for (int i = 1; i <( OBJ_SIZE / FIXED_SIZE)-1; i++)
-            if(!equalsCompare(st1.substring(i * FIXED_SIZE, (i+1) *FIXED_SIZE ).trim(),(st2.substring(i * FIXED_SIZE, (i+1) * FIXED_SIZE ).trim() )))
+        for (int i = 1; i < (OBJ_SIZE / FIXED_SIZE) - 1; i++)
+            if (!equalsCompare(st1.substring(i * FIXED_SIZE, (i + 1) * FIXED_SIZE).trim(), (st2.substring(i * FIXED_SIZE, (i + 1) * FIXED_SIZE).trim())))
                 return false;
         return true;
     }
-    public boolean equalsCompare(String st1,String st2){
-        return (((st1.equals(st2)) || st2.equals("") || st2.equals("0"))&& !st1.equals("null"));
+
+    public boolean equalsCompare(String st1, String st2) {
+        return (((st1.equals(st2)) || st2.equals("") || st2.equals("0")) && !st1.equals("null"));
     }
 
-    public boolean remove(String id , String empty) throws IOException {
+    public boolean remove(String id, String empty) throws IOException {
         int pointer = existValue(id);
         if (pointer > -1)
-            return writeObj(pointer,empty); // choose shift or write null
+            return writeObj(pointer, empty); // choose shift or write null
         return false;
     }
 
     public void rewrite(String obj) throws IOException {
         int pointer = existValue(obj.substring(0, FIXED_SIZE).trim());
-        if (pointer > -1) writeObj(pointer , obj);
+        if (pointer > -1) writeObj(pointer, obj);
         else writeObj(-3, obj);
 
     }
+
+    public List<String> searcherTicket(String e) throws IOException {
+        List<String> list = new ArrayList<>();
+        for (long i = 0; i < raf.length() / OBJ_SIZE; i++) {
+            String temp = readPart(OBJ_SIZE, i * OBJ_SIZE);
+            if (compareTicket(temp, e))
+                list.add(temp);
+        }
+        return list;
+    }
+
+    public boolean compareTicket(String st1, String st2) {
+        for (int i = 1; i <= (OBJ_SIZE / FIXED_SIZE) - 1; i++)
+            if (!equalsCompare(st1.substring(i * FIXED_SIZE, (i + 1) * FIXED_SIZE).trim(), (st2.substring(i * FIXED_SIZE, (i + 1) * FIXED_SIZE).trim())))
+                return false;
+        return true;
+    }
+
 }

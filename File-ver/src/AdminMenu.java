@@ -67,7 +67,7 @@ public class AdminMenu extends Menu{
             Flight flightOld =new Flight().convertToObj(flight);
             flightOld.update(flightNew);
             flights.rewrite(flightOld.toString());
-            tickets.removeFlight(flightOld.getFlightId());
+            flights.removeTicket(flightOld.getFlightId());
         }
     }
 }

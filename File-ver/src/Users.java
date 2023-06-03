@@ -13,10 +13,10 @@ public class Users extends FileHandler{
         if(user1.getPassword().trim().equals(pass))return user1;
         return null;
     }
-    public void removeTicket(String ticket) throws IOException {
-        User user = new User ().convertToObj((findValue(ticket.substring(20,40).trim())));
+    public void removeTicket(String user1 ,int price) throws IOException {
+        User user = new User ().convertToObj((findValue(user1)));
         user.addNotify();
-        user.updateCharge(new Flight().convertToObj(ticket.substring(40,60)).getPrice());
+        user.updateCharge(price);
         rewrite(user.toString());
     }
 

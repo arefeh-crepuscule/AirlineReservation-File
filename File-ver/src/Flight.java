@@ -61,4 +61,8 @@ public class Flight {
     public int getPrice() {
         return price;
     }
+
+    public int getSeats() {
+        return seats;
+    }
 }
